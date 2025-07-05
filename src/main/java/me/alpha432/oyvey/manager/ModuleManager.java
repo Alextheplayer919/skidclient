@@ -8,7 +8,8 @@ import me.alpha432.oyvey.features.Feature;
 import me.alpha432.oyvey.features.modules.Module;
 import me.alpha432.oyvey.features.modules.client.ClickGui;
 import me.alpha432.oyvey.features.modules.client.HudModule;
-import me.alpha432.oyvey.features.modules.combat.AutoAttack; // ✅ IMPORTED YOUR MODULE
+import me.alpha432.oyvey.features.modules.combat.AutoAttack;
+import me.alpha432.oyvey.features.modules.combat.CrystalAura;  // <--- Added this import
 import me.alpha432.oyvey.features.modules.combat.Criticals;
 import me.alpha432.oyvey.features.modules.misc.MCF;
 import me.alpha432.oyvey.features.modules.movement.ReverseStep;
@@ -43,7 +44,8 @@ public class ModuleManager implements Jsonable, Util {
         modules.add(new BlockHighlight());
         modules.add(new NoFall());
 
-        modules.add(new AutoAttack()); // ✅ Added your custom module
+        modules.add(new AutoAttack());
+        modules.add(new CrystalAura());   // <--- Added your CrystalAura module here
     }
 
     public Module getModuleByName(String name) {
