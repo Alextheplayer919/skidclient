@@ -1,7 +1,7 @@
 package me.alpha432.oyvey.features.modules.combat;
 
 import me.alpha432.oyvey.features.modules.Module;
-import me.alpha432.oyvey.features.settings.Setting;  // <--- fixed this import
+import me.alpha432.oyvey.features.setting.Setting; // fixed import
 import me.alpha432.oyvey.util.models.Timer;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.entity.Entity;
@@ -10,6 +10,7 @@ import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.util.Hand;
 
 import java.util.Comparator;
+import java.util.stream.StreamSupport; // <--- add this
 
 public class AutoAttack extends Module {
     private final Timer attackTimer = new Timer();
@@ -28,8 +29,7 @@ public class AutoAttack extends Module {
     public void onTick() {
         if (mc.player == null || mc.world == null) return;
 
-        Entity target = mc.world.getEntities()
-                .stream()
+        Entity target = StreamSupport.stream(mc.world.getEntities().spliterator(), false)
                 .filter(e -> e instanceof LivingEntity)
                 .filter(e -> e != mc.player)
                 .filter(e -> ((LivingEntity) e).isAlive())
