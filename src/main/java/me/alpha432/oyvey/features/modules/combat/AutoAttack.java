@@ -7,6 +7,7 @@ import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.Hand;
 
 import java.util.Comparator;
@@ -54,7 +55,7 @@ public class AutoAttack extends Module {
 
     private void faceTarget(Entity target, boolean silent) {
         double diffX = target.getX() - mc.player.getX();
-        double diffY = target.getY() + target.getStandingEyeHeight() - (mc.player.getY() + mc.player.getStandingEyeHeight());
+        double diffY = (target.getY() + target.getStandingEyeHeight()) - (mc.player.getY() + mc.player.getStandingEyeHeight());
         double diffZ = target.getZ() - mc.player.getZ();
         double dist = Math.sqrt(diffX * diffX + diffZ * diffZ);
 
@@ -62,14 +63,25 @@ public class AutoAttack extends Module {
         float pitch = (float) -Math.toDegrees(Math.atan2(diffY, dist));
 
         if (silent) {
-            mc.player.setYaw(yaw);
-            mc.player.setPitch(pitch);
+            sendSilentRotation(yaw, pitch);
         } else {
             mc.player.setYaw(yaw);
             mc.player.setPitch(pitch);
             mc.player.setHeadYaw(yaw);
             mc.player.setBodyYaw(yaw);
         }
+    }
+
+    private void sendSilentRotation(float yaw, float pitch) {
+        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.Full(
+            mc.player.getX(),
+            mc.player.getY(),
+            mc.player.getZ(),
+            yaw,
+            pitch,
+            mc.player.isOnGround(),
+            mc.player.horizontalCollision
+        ));
     }
 
     @Override
