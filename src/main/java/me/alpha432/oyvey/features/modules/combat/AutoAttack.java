@@ -1,7 +1,7 @@
 package me.alpha432.oyvey.features.modules.combat;
 
 import me.alpha432.oyvey.features.modules.Module;
-import me.alpha432.oyvey.features.setting.Setting; 
+import me.alpha432.oyvey.features.settings.Setting;
 import me.alpha432.oyvey.util.models.Timer;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.entity.Entity;
@@ -39,40 +39,37 @@ public class AutoAttack extends Module {
                 .orElse(null);
 
         if (target != null && attackTimer.passedMs(delay.getValue())) {
+            if (rotate.getValue()) {
+                faceTarget(target, silentRotate.getValue());
+            }
             attack(target);
             attackTimer.reset();
         }
     }
 
     private void attack(Entity target) {
-        if (silentRotate.getValue()) {
-            float[] rotations = calculateRotations(target);
-            float yaw = rotations[0];
-            float pitch = rotations[1];
-            mc.player.networkHandler.sendPacket(
-                new PlayerInteractEntityC2SPacket.AttackWithRotation(target, yaw, pitch, mc.player.isSneaking())
-            );
-        } else if (rotate.getValue()) {
-            float[] rotations = calculateRotations(target);
-            mc.player.yaw = rotations[0];
-            mc.player.pitch = rotations[1];
-            mc.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.attack(target, mc.player.isSneaking()));
-        } else {
-            mc.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.attack(target, mc.player.isSneaking()));
-        }
+        mc.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.attack(target, mc.player.isSneaking()));
         mc.player.swingHand(Hand.MAIN_HAND);
     }
 
-    private float[] calculateRotations(Entity target) {
+    private void faceTarget(Entity target, boolean silent) {
         double diffX = target.getX() - mc.player.getX();
-        double diffY = (target.getY() + target.getEyeHeight()) - (mc.player.getY() + mc.player.getEyeHeight());
+        double diffY = target.getY() + target.getStandingEyeHeight() - (mc.player.getY() + mc.player.getStandingEyeHeight());
         double diffZ = target.getZ() - mc.player.getZ();
         double dist = Math.sqrt(diffX * diffX + diffZ * diffZ);
 
         float yaw = (float) Math.toDegrees(Math.atan2(diffZ, diffX)) - 90F;
         float pitch = (float) -Math.toDegrees(Math.atan2(diffY, dist));
 
-        return new float[] {yaw, pitch};
+        if (silent) {
+            mc.player.setYaw(yaw);
+            mc.player.setPitch(pitch);
+        } else {
+            mc.player.setYaw(yaw);
+            mc.player.setPitch(pitch);
+            mc.player.setHeadYaw(yaw);
+            mc.player.setBodyYaw(yaw);
+        }
     }
 
     @Override
