@@ -12,6 +12,7 @@ import me.alpha432.oyvey.features.modules.client.ClickGuiModule;
 import me.alpha432.oyvey.features.modules.client.HudEditorModule;
 import me.alpha432.oyvey.features.modules.client.NotificationsModule;
 import me.alpha432.oyvey.features.modules.combat.CriticalsModule;
+import me.alpha432.oyvey.features.modules.combat.KillAura;
 import me.alpha432.oyvey.features.modules.combat.KeyPearlModule;
 import me.alpha432.oyvey.features.modules.hud.CoordinatesHudModule;
 import me.alpha432.oyvey.features.modules.hud.WatermarkHudModule;
@@ -43,6 +44,7 @@ public class ModuleManager implements Jsonable, Util {
         register(new ClickGuiModule());
         register(new NotificationsModule());
         register(new CriticalsModule());
+        register(new KillAura());
         register(new MCFModule());
         register(new StepModule());
         register(new ReverseStepModule());
@@ -142,4 +144,4 @@ public class ModuleManager implements Jsonable, Util {
     public String getFileName() {
         return "modules.json";
     }
-}
+    }
